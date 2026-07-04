@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jupiter Lab Learning in deep water</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: '#080710',
+                        card: '#12131C',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.5); }
+        
+        /* Sidebar transition utilities */
+        #sidebar { transition: width 0.3s ease; }
+        #main-content { transition: padding-left 0.3s ease; }
+        .nav-text { transition: opacity 0.2s ease, width 0.2s ease; }
+        .collapsed .nav-text { opacity: 0; width: 0; overflow: hidden; }
+        .collapsed #sidebar-header-text { opacity: 0; width: 0; overflow: hidden; }
+        .collapsed #toggle-icon { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="bg-space text-slate-100 relative overflow-x-hidden selection:bg-indigo-500/30 selection:text-indigo-200">
+
+    <!-- Ambient Radial Background Glows -->
+    <div class="fixed top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-br from-indigo-600/10 via-purple-600/5 to-transparent blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed top-[40%] right-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-cyan-500/10 via-indigo-500/5 to-transparent blur-[100px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-5%] left-[20%] w-[700px] h-[700px] rounded-full bg-gradient-to-tr from-purple-600/10 via-violet-500/5 to-transparent blur-[140px] pointer-events-none z-0"></div>
+
+    <!-- COLLAPSIBLE SIDEBAR -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full bg-card/90 backdrop-blur-xl border-r border-white/5 z-40 flex flex-col w-72">
+        <div class="h-20 flex items-center justify-between px-6 border-b border-white/5 shrink-0">
+            <span id="sidebar-header-text" class="text-sm font-semibold tracking-wider uppercase bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent whitespace-nowrap">
+                Navigation
+            </span>
+            <button onclick="toggleSidebar()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-slate-400 hover:text-white transition-all ml-auto shrink-0" aria-label="Toggle Sidebar">
+                <svg id="toggle-icon" class="w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2 custom-scrollbar">
+            <!-- Navigation Links -->
+            <a href="#notebook-core" class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.03] transition-all group">
+                <div class="w-2 h-2 shrink-0 rounded-full bg-indigo-500/60 group-hover:bg-cyan-400 transition-colors shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                <div class="flex flex-col nav-text whitespace-nowrap">
+                    <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Notebook Architecture</span>
+                    <span class="text-[11px] text-slate-500 mt-0.5">Core execution environment cell</span>
+                </div>
+            </a>
+            <a href="#model-guide" class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.03] transition-all group">
+                <div class="w-2 h-2 shrink-0 rounded-full bg-indigo-500/60 group-hover:bg-cyan-400 transition-colors shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                <div class="flex flex-col nav-text whitespace-nowrap">
+                    <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Model Infrastructure</span>
+                    <span class="text-[11px] text-slate-500 mt-0.5">Swap guide parameters</span>
+                </div>
+            </a>
+            <a href="#general-flagships" class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.03] transition-all group">
+                <div class="w-2 h-2 shrink-0 rounded-full bg-indigo-500/60 group-hover:bg-cyan-400 transition-colors shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                <div class="flex flex-col nav-text whitespace-nowrap">
+                    <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">General Flagships</span>
+                    <span class="text-[11px] text-slate-500 mt-0.5">GPT-5 mid-gen variants</span>
+                </div>
+            </a>
+            <a href="#codex-series" class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.03] transition-all group">
+                <div class="w-2 h-2 shrink-0 rounded-full bg-indigo-500/60 group-hover:bg-cyan-400 transition-colors shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                <div class="flex flex-col nav-text whitespace-nowrap">
+                    <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Codex Series</span>
+                    <span class="text-[11px] text-slate-500 mt-0.5">Programming engine instances</span>
+                </div>
+            </a>
+            <a href="#reasoning-tiers" class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.03] transition-all group">
+                <div class="w-2 h-2 shrink-0 rounded-full bg-indigo-500/60 group-hover:bg-cyan-400 transition-colors shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                <div class="flex flex-col nav-text whitespace-nowrap">
+                    <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Reasoning Tiers</span>
+                    <span class="text-[11px] text-slate-500 mt-0.5">Advanced o-series architecture</span>
+                </div>
+            </a>
+            <a href="#deep-research" class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.03] transition-all group">
+                <div class="w-2 h-2 shrink-0 rounded-full bg-indigo-500/60 group-hover:bg-cyan-400 transition-colors shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                <div class="flex flex-col nav-text whitespace-nowrap">
+                    <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Deep Research Tiers</span>
+                    <span class="text-[11px] text-slate-500 mt-0.5">Live search workflows</span>
+                </div>
+            </a>
+            <a href="#master-directory" class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.03] transition-all group">
+                <div class="w-2 h-2 shrink-0 rounded-full bg-indigo-500/60 group-hover:bg-cyan-400 transition-colors shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                <div class="flex flex-col nav-text whitespace-nowrap">
+                    <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Master Directory</span>
+                    <span class="text-[11px] text-slate-500 mt-0.5">Complete input parameter matrix</span>
+                </div>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main id="main-content" class="relative z-10 transition-all duration-300 min-h-screen py-12 px-6 md:px-12 max-w-7xl mx-auto pl-28 md:pl-80">
+        
+        <!-- Header -->
+        <header class="mb-16 text-center md:text-left">
+            <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-indigo-500/5 border border-indigo-500/10 text-xs font-medium tracking-wide text-indigo-400 mb-4 backdrop-blur-md">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                GitHub Pages Live Host Environment
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4">
+                Jupiter Lab Learning <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">in deep water</span>
+            </h1>
+            <p class="text-base text-slate-400 max-w-2xl leading-relaxed mx-auto md:mx-0">
+                High-performance operational hub interfacing with advanced generative intelligence endpoints, localized telemetry visualization systems, and resilient communications.
+            </p>
+        </header>
+
+        <div class="space-y-8">
+            
+            <!-- CORE ARCHITECTURE -->
+            <section id="notebook-core" class="relative group rounded-[2rem] p-[1px] bg-gradient-to-b from-white/10 via-white/5 to-transparent shadow-2xl transition-all">
+                <div class="absolute inset-0 rounded-[2rem] bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none"></div>
+                <div class="relative rounded-[2rem] bg-card p-6 md:p-8 backdrop-blur-md overflow-hidden">
+                    
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6 pb-6 border-b border-white/5 text-center lg:text-left">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-bold text-white tracking-wide">Notebook Execution Subsystem</h2>
+                            <p class="text-sm text-slate-400 mt-1">This module acts as the baseline core configuration. Paste the logic sequence block directly inside a standalone Jupyter cell.</p>
+                        </div>
+                        <button id="copy-btn" onclick="copyCode()" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white transition-all shadow-[0_4px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_4px_25px_rgba(79,70,229,0.5)] border border-indigo-400/20 active:scale-95 w-full lg:w-auto shrink-0">
+                            <svg id="copy-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                            </svg>
+                            <span id="copy-text">Copy Entire Cell Source</span>
+                        </button>
+                    </div>
+
+                    <div class="relative rounded-2xl border border-white/5 bg-space/90 overflow-hidden">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-2 px-4 py-3 bg-card/60 border-b border-white/5 text-[11px] font-mono tracking-wider text-slate-500 text-center md:text-left">
+                            <span>JUPYTER LABORATORY INTERFACE // CORE_HANDLER.PY</span>
+                            <span class="flex items-center justify-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
+                                UNTOUCHED IMMUTABLE SOURCE
+                            </span>
+                        </div>
+                        <div class="p-4 md:p-6 overflow-x-auto max-h-[480px] text-xs font-mono leading-relaxed text-indigo-200/90 custom-scrollbar">
+<pre id="code-block" class="whitespace-pre">import os
+import json
+import time
+import requests
+import folium
+import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
+from dotenv import load_dotenv
+from openai import OpenAI
+
+# Get the OpenAI API key from the .env file
+load_dotenv('.env', override=True)
+openai_api_key = os.getenv('OPENAI_API_KEY')
+
+# Set up the OpenAI client
+client = OpenAI(api_key=openai_api_key)
+
+
+def execute_llm_call(prompt, model="gpt-5.5"):
+    """
+    Internal execution handler that dynamically detects the correct OpenAI endpoint architecture,
+    binds appropriate token limits, configures tool payloads, and cleanly extracts output string data.
+    Includes a buffer-flushed real-time polling loop for long-running deep-research agent requests.
+    """
+    if not isinstance(prompt, str):
+        raise ValueError("Input must be a string enclosed in quotes.")
+
+    messages_context = [
+        {
+            "role": "system",
+            "content": "You are a helpful but terse AI assistant who gets straight to the point.",
+        },
+        {"role": "user", "content": prompt},
+    ]
+
+    # Explicit routing logic for primary API selection
+    prefer_responses_api = (model.startswith("gpt-5") or "deep-research" in model or model == "o3-pro") and not (model == "gpt-5-search-api")
+
+    if prefer_responses_api:
+        try:
+            kwargs = {
+                "model": model,
+                "input": messages_context,
+                "max_output_tokens": 4096
+            }
+            
+            # Special logic for agentic deep-research execution
+            if "deep-research" in model:
+                kwargs["tools"] = [{"type": "web_search_preview"}]
+                kwargs["background"] = True  
+                
+                initial_job = client.responses.create(**kwargs)
+                job_id = initial_job.id
+                
+                print(f"⚡ [Deep Research Engine] Initializing multi-step agent workflow for {model}...", flush=True)
+                start_time = time.time()
+                
+                while True:
+                    current_run = client.responses.retrieve(job_id)
+                    if current_run.status == "completed":
+                        print("\n✓ Research complete! Rendering report...\n", flush=True)
+                        return current_run.output_text
+                    elif current_run.status in ["failed", "cancelled"]:
+                        raise RuntimeError(f"Deep Research execution ended prematurely with status: {current_run.status}")
+                    
+                    elapsed = int(time.time() - start_time)
+                    print(f"🔍 Agent has been searching and analyzing data for {elapsed} seconds...", end="\r", flush=True)
+                    time.sleep(5)
+            
+            # Standard Responses API execution
+            response_obj = client.responses.create(**kwargs)
+            return response_obj.output_text
+            
+        except Exception:
+            return _chat_completions_fallback(messages_context, model)
+    else:
+        try:
+            return _chat_completions_fallback(messages_context, model)
+        except Exception:
+            kwargs = {
+                "model": model,
+                "input": messages_context,
+                "max_output_tokens": 4096
+            }
+            if "deep-research" in model or "search" in model:
+                kwargs["tools"] = [{"type": "web_search_preview"}]
+            response_obj = client.responses.create(**kwargs)
+            return response_obj.output_text
+
+
+def _chat_completions_fallback(messages, model):
+    """Internal helper targeting Chat Completions with safe token and temperature parameters."""
+    kwargs = {
+        "model": model,
+        "messages": messages
+    }
+    
+    is_reasoning = model.startswith("o") or "latest" in model or "mini" in model or "nano" in model or "4.1" in model
+    is_search_preview = "search" in model
+
+    if is_reasoning:
+        kwargs["max_completion_tokens"] = 4096
+    else:
+        kwargs["max_tokens"] = 2048
+        # Search preview models explicitly reject a rigid 0.0 temperature constraint
+        if not is_search_preview:
+            kwargs["temperature"] = 0.0
+
+    completion = client.chat.completions.create(**kwargs)
+    return completion.choices[0].message.content
+
+
+def print_llm_response(prompt, model="gpt-5.5"):
+    try:
+        response = execute_llm_call(prompt, model=model)
+        print(response)
+    except Exception as e:
+        print("Error:", str(e))
+
+
+def get_llm_response(prompt, model="gpt-5.5"):
+    try:
+        return execute_llm_call(prompt, model=model)
+    except Exception as e:
+        return f"Error: {str(e)}"
+    
+    
+def beautiful_barh(labels, values):
+    plt.figure(figsize=(9, 5))
+    bars = plt.barh(labels, values, color=plt.cm.tab20.colors)
+
+    for bar in bars:
+        plt.text(bar.get_width()/2,   
+             bar.get_y() + bar.get_height()/2,  
+             f'${bar.get_width() / 1e9:.1f}B',  
+             ha='center', va='center', color='w', fontsize=10, fontweight="bold")
+             
+    def billions(x, pos):
+        return f'${x * 1e-9:.1f}B'
+
+    formatter = FuncFormatter(billions)
+    plt.gca().xaxis.set_major_formatter(formatter)
+    plt.gca().invert_yaxis()</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODEL GUIDE HEADER -->
+            <div id="model-guide" class="pt-8 text-center md:text-left">
+                <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-white mb-2">Enabled Model Routing Matrix</h2>
+                <p class="text-sm text-slate-400">Dynamically update the parameter strings within execution calls to target specific compute layer architectures.</p>
+            </div>
+
+            <!-- BENTO GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- CARD 1 -->
+                <div id="general-flagships" class="rounded-[2rem] p-[1px] bg-gradient-to-b from-white/10 to-transparent group hover:from-indigo-500/20 transition-all duration-300">
+                    <div class="rounded-[2rem] bg-card p-6 md:p-8 h-full flex flex-col justify-between backdrop-blur-md text-center md:text-left">
+                        <div>
+                            <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-5 mx-auto md:mx-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-bold text-white mb-2 tracking-wide">General Flagship Variants</h3>
+                            <p class="text-xs md:text-sm text-slate-400 leading-relaxed mb-6">Optimized for balanced workflows, mid-generation processing, and ultra-low latency requirements. Drop mini or nano variants straight into parameters for rapid responses.</p>
+                        </div>
+                        <div class="rounded-xl border border-white/5 bg-space/50 p-4 font-mono text-[11px] leading-relaxed text-indigo-300 text-left overflow-x-auto">
+                            <span class="text-slate-500 block mb-1"># Mid-generation implementation test</span>
+                            print_llm_response(<span class="text-cyan-300">"What is the main advantage of glassmorphism UI?"</span>, model=<span class="text-purple-300">"gpt-5.4"</span>)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2 -->
+                <div id="codex-series" class="rounded-[2rem] p-[1px] bg-gradient-to-b from-white/10 to-transparent group hover:from-purple-500/20 transition-all duration-300">
+                    <div class="rounded-[2rem] bg-card p-6 md:p-8 h-full flex flex-col justify-between backdrop-blur-md text-center md:text-left">
+                        <div>
+                            <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-5 mx-auto md:mx-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-bold text-white mb-2 tracking-wide">Dedicated Codex Engines</h3>
+                            <p class="text-xs md:text-sm text-slate-400 leading-relaxed mb-6">Targeted code analysis and logic structural engineering parameters. Swappable array includes capacity-max targets down to rapid hardware blinking utilities.</p>
+                        </div>
+                        <div class="rounded-xl border border-white/5 bg-space/50 p-4 font-mono text-[11px] leading-relaxed text-purple-300 text-left overflow-x-auto">
+                            <span class="text-slate-500 block mb-1"># Parsing configuration setup execution</span>
+                            script = get_llm_response(<span class="text-cyan-300">"Write a Python script to parse an MQTT JSON payload."</span>, model=<span class="text-indigo-300">"gpt-5.1-codex-max"</span>)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3 -->
+                <div id="reasoning-tiers" class="rounded-[2rem] p-[1px] bg-gradient-to-b from-white/10 to-transparent group hover:from-cyan-500/20 transition-all duration-300">
+                    <div class="rounded-[2rem] bg-card p-6 md:p-8 h-full flex flex-col justify-between backdrop-blur-md text-center md:text-left">
+                        <div>
+                            <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-5 mx-auto md:mx-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 11h.01M12 7h.01M15 7h.01M15 11h.01M15 14h.01M12 14h.01M9 11h.01M12 17h.01m-7 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-bold text-white mb-2 tracking-wide">Mathematical Reasoning Matrix</h3>
+                            <p class="text-xs md:text-sm text-slate-400 leading-relaxed mb-6">Complex pattern synthesis and discrete logic systems. Handles math-heavy problem formulation automatically with strict internal token overrides and temperature reduction.</p>
+                        </div>
+                        <div class="rounded-xl border border-white/5 bg-space/50 p-4 font-mono text-[11px] leading-relaxed text-cyan-300 text-left overflow-x-auto">
+                            <span class="text-slate-500 block mb-1"># Algorithmic discrete tracking calculation</span>
+                            print_llm_response(<span class="text-purple-300">"Find the next number in the sequence..."</span>, model=<span class="text-emerald-300">"o3"</span>)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4 -->
+                <div id="deep-research" class="rounded-[2rem] p-[1px] bg-gradient-to-b from-white/10 to-transparent group hover:from-emerald-500/20 transition-all duration-300">
+                    <div class="rounded-[2rem] bg-card p-6 md:p-8 h-full flex flex-col justify-between backdrop-blur-md text-center md:text-left">
+                        <div>
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-5 mx-auto md:mx-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-bold text-white mb-2 tracking-wide">Autonomous Deep Research Tiers</h3>
+                            <p class="text-xs md:text-sm text-slate-400 leading-relaxed mb-6">Triggers complex long-running agent workflows. Recognizes specialized search keywords within queries to initialize live background polling cycles with counting telemetry tickers.</p>
+                        </div>
+                        <div class="rounded-xl border border-white/5 bg-space/50 p-4 font-mono text-[11px] leading-relaxed text-emerald-300 text-left overflow-x-auto">
+                            <span class="text-slate-500 block mb-1"># Triggers live telemetry analytics looping</span>
+                            market_analysis = get_llm_response(prompt, model=<span class="text-cyan-300">"o4-mini-deep-research"</span>)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MASTER DIRECTORY TABLE -->
+            <section id="master-directory" class="rounded-[2rem] p-[1px] bg-gradient-to-b from-white/10 via-white/5 to-transparent shadow-xl mt-8">
+                <div class="rounded-[2rem] bg-card p-6 md:p-8 backdrop-blur-md overflow-hidden">
+                    <div class="mb-6 text-center md:text-left">
+                        <h2 class="text-xl md:text-2xl font-bold text-white tracking-wide">Master Parameter Identifier Directory</h2>
+                        <p class="text-sm text-slate-400 mt-1">Universal input string tokens mapping to running core systems inside your execution cells.</p>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-2xl border border-white/5 bg-space/40 custom-scrollbar pb-2">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm whitespace-nowrap md:whitespace-normal">
+                            <thead>
+                                <tr class="border-b border-white/5 bg-white/[0.02] text-slate-400 font-medium tracking-wider uppercase text-[11px]">
+                                    <th class="px-4 md:px-6 py-4 min-w-[150px]">Architecture Layer</th>
+                                    <th class="px-4 md:px-6 py-4">Valid Drop-In Model String Parameters</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5 font-mono text-slate-300">
+                                <tr class="hover:bg-white/[0.01] transition-colors">
+                                    <td class="px-4 md:px-6 py-4 font-sans font-medium text-white">GPT-5.x Flagships</td>
+                                    <td class="px-4 md:px-6 py-4 text-indigo-300 leading-relaxed">"gpt-5.5", "gpt-5.5-pro", "gpt-5.4", "gpt-5.4-pro", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.2", "gpt-5.2-pro", "gpt-5.1", "gpt-5", "gpt-5-pro"</td>
+                                </tr>
+                                <tr class="hover:bg-white/[0.01] transition-colors">
+                                    <td class="px-4 md:px-6 py-4 font-sans font-medium text-white">Dedicated Coding (Codex)</td>
+                                    <td class="px-4 md:px-6 py-4 text-purple-300 leading-relaxed">"gpt-5.3-codex", "gpt-5.2-codex", "gpt-5.1-codex", "gpt-5.1-codex-max", "gpt-5.1-codex-mini", "gpt-5-codex"</td>
+                                </tr>
+                                <tr class="hover:bg-white/[0.01] transition-colors">
+                                    <td class="px-4 md:px-6 py-4 font-sans font-medium text-white">Deep Reasoning</td>
+                                    <td class="px-4 md:px-6 py-4 text-cyan-300 leading-relaxed">"o4-mini", "o3", "o3-mini", "o3-pro", "o1", "o1-pro"</td>
+                                </tr>
+                                <tr class="hover:bg-white/[0.01] transition-colors">
+                                    <td class="px-4 md:px-6 py-4 font-sans font-medium text-white">Live Web Agents</td>
+                                    <td class="px-4 md:px-6 py-4 text-emerald-300 leading-relaxed">"o4-mini-deep-research", "o3-deep-research", "gpt-4o-search-preview", "gpt-4o-mini-search-preview"</td>
+                                </tr>
+                                <tr class="hover:bg-white/[0.01] transition-colors">
+                                    <td class="px-4 md:px-6 py-4 font-sans font-medium text-white">Everyday GPT-4 Tiers</td>
+                                    <td class="px-4 md:px-6 py-4 text-slate-400 leading-relaxed">"gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "gpt-4o", "gpt-4o-mini", "chat-latest", "gpt-4-turbo"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="mt-20 pt-8 border-t border-white/5 text-center text-xs text-slate-600 font-mono tracking-widest uppercase pb-12">
+            DEEP WATER LABS // SECURE DOCUMENTATION STREAM
+        </footer>
+    </main>
+
+    <!-- Interactions Script -->
+    <script>
+        // Sidebar Toggle Logic
+        let sidebarOpen = false;
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            sidebarOpen = !sidebarOpen;
+            
+            if (sidebarOpen) {
+                sidebar.classList.remove('w-20', 'collapsed');
+                sidebar.classList.add('w-72');
+                mainContent.classList.remove('pl-28');
+                mainContent.classList.add('pl-80');
+            } else {
+                sidebar.classList.remove('w-72');
+                sidebar.classList.add('w-20', 'collapsed');
+                mainContent.classList.remove('pl-80');
+                mainContent.classList.add('pl-28');
+            }
+        }
+
+        // Initialize sidebar as collapsed on mobile by default to improve layout
+        if (window.innerWidth < 768) {
+            toggleSidebar();
+        } else {
+            // Set initial open state for desktop
+            sidebarOpen = true;
+        }
+
+        // Copy Code Logic
+        function copyCode() {
+            const code = document.getElementById('code-block').innerText;
+            const btn = document.getElementById('copy-btn');
+            const icon = document.getElementById('copy-icon');
+            const text = document.getElementById('copy-text');
+
+            navigator.clipboard.writeText(code).then(() => {
+                // Change style to success
+                text.innerText = "Payload Copied!";
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>`;
+                icon.classList.add('text-emerald-400');
+                
+                // Revert after 2 seconds
+                setTimeout(() => {
+                    text.innerText = "Copy Entire Cell Source";
+                    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>`;
+                    icon.classList.remove('text-emerald-400');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
